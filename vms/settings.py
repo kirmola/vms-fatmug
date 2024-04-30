@@ -130,3 +130,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INSTALLED_APPS+=[
     "api",
 ]
+
+
+######################## Rest Framework specific ###########################
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
+
+INSTALLED_APPS+=[
+    "rest_framework"
+]
