@@ -31,7 +31,7 @@ class Vendor(models.Model):
         verbose_name_plural = _("Vendors")
 
     def __str__(self):
-        return f"Details of Vendor {self.name}"
+        return self.name
 
     def get_absolute_url(self):
         return reverse("Vendor_detail", kwargs={"vendor_id": self.vendor_code})
@@ -64,7 +64,7 @@ class PurchaseOrder(models.Model):
         verbose_name_plural = _("Purchase Orders")
 
     def __str__(self):
-        return self.vendor
+        return f"Purchase Orders from {self.vendor}"
 
     def get_absolute_url(self):
         return reverse("PurchaseOrder_detail", kwargs={"po_id": self.po_number})
@@ -94,5 +94,5 @@ class Performance(models.Model):
         verbose_name_plural = _("Performance Detail")
 
     def __str__(self):
-        return f"Performace {self.vendor} on {self.date}" 
+        return f"Performace Report of {self.vendor} on {self.date}" 
 

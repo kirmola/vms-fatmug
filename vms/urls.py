@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from api import views
-from rest_framework_nested import routers
 
 
 router = routers.DefaultRouter()
@@ -30,6 +29,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/vendors/<str:vendor_id>/performance/", views.PerformanceViewSet.as_view({"get":"list"}), name="vendor_performance"),
-    # path("api/", include(performace_nested_router.urls)),
     path("auth/", include("rest_framework.urls"))
 ]
