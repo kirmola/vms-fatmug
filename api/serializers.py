@@ -12,3 +12,9 @@ class POSerializer(ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = "__all__"
+
+
+class PerformanceSerializer(ModelSerializer):
+    class Meta:
+        model = Performance
+        fields = "__all__"

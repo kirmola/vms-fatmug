@@ -82,7 +82,7 @@ class Performance(models.Model):
     quality_rating_avg = models.FloatField(_("Average Quality Rating"), validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=5)
-    ], default=None)
+    ])
     fulfillment_rate = models.FloatField(_("Order Fulfillment rate of vendor"), validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=100)
@@ -94,5 +94,5 @@ class Performance(models.Model):
         verbose_name_plural = _("Performance Detail")
 
     def __str__(self):
-        return f"Performace of {self.vendor} on {self.date}" 
+        return f"Performace {self.vendor} on {self.date}" 
 
