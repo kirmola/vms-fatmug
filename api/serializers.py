@@ -6,3 +6,9 @@ class VendorSerializer(ModelSerializer):
     class Meta:
         model = Vendor
         fields = "__all__"
+
+
+class POSerializer(ModelSerializer):
+    class Meta:
+        model = PurchaseOrder
+        fields = "__all__"

@@ -21,6 +21,7 @@ from api import views
 
 router = routers.DefaultRouter()
 router.register(r"vendors", views.VendorViewSet)
+router.register(r"purchase_orders", views.POViewSet)
 # router.register(r"purchase_orders", views.POViewSet)
 
 urlpatterns = [
