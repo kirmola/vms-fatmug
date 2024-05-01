@@ -74,10 +74,11 @@ class PurchaseOrder(models.Model):
 class Performance(models.Model):
 
     vendor = models.ForeignKey("api.Vendor", verbose_name=_("Vendor"), on_delete=models.CASCADE)
-    date = models.DateField(_("Date of Performace Record"), auto_now_add=True)
+    date = models.DateField(_("Date of Performace Record"), auto_now_add=True, unique=True)
     on_time_delivery_rate = models.FloatField(_("Percentage of On-time delivery"), validators=[
         MinValueValidator(limit_value=1),
-        MaxValueValidator(limit_value=100)]),
+        MaxValueValidator(limit_value=100)
+    ]),
     avg_response_time = models.FloatField(_("Average Response time"))
     quality_rating_avg = models.FloatField(_("Average Quality Rating"), validators=[
         MinValueValidator(limit_value=1),
@@ -96,3 +97,7 @@ class Performance(models.Model):
     def __str__(self):
         return f"Performace Report of {self.vendor} on {self.date}" 
 
+
+    def get_absolute_url(self):
+        return reverse("Performance_detail", kwargs={"vendor_id": self.vendor__vendor_code})
+    
