@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.http import HttpRequest
 
 from .models import (
     PurchaseOrder,
@@ -16,4 +17,8 @@ class VendorAdmin(admin.ModelAdmin):
 
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
-    pass
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False
+    
+    def has_change_permission(self, request: HttpRequest, obj=None) -> bool:
+        return False
