@@ -5,6 +5,7 @@ from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
 )
+from django.utils import timezone
 
 
 class Vendor(models.Model):
@@ -23,7 +24,7 @@ class Vendor(models.Model):
         MaxValueValidator(limit_value=5),   # Rating no more than 5
     ], default=None, null=True)
     average_response_time = models.FloatField(
-        _("Average Response time of vendor"), default=None, null=True)
+        _("Average Response time of vendor in hours"), default=None, null=True)
     fulfillment_rate = models.FloatField(_("Order Fulfillment rate of vendor"), validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=100)
@@ -42,30 +43,25 @@ class Vendor(models.Model):
 
 class PurchaseOrder(models.Model):
 
-    ORDER_STATUS = {
-        "PENDING": "Pending",
-        "COMPLETED": "Completed",
-        "CANCELLED": "Cancelled",
-    }
+    ORDER_STATUS = (
+        ("PENDING", "Pending"),
+        ("COMPLETED", "Completed"),
+        ("CANCELLED", "Cancelled"),
+    )
 
-    po_number = models.CharField(
-        _("Unique PO Number"), max_length=50, primary_key=True)
-    vendor = models.ForeignKey("api.Vendor", verbose_name=_(
-        "Vendor"), on_delete=models.CASCADE)
+    po_number = models.CharField(_("Unique PO Number"), max_length=50, primary_key=True)
+    vendor = models.ForeignKey("api.Vendor", verbose_name=_("Vendor"), on_delete=models.CASCADE)
     order_date = models.DateTimeField(_("Order Date"), auto_now_add=True)
     delivery_date = models.DateTimeField(_("Delivery Date"), auto_now=True)
     items = models.JSONField(_("Ordered Items Details"), default=dict)
     quantity = models.IntegerField(_("Quantity of Items"))
-    status = models.CharField(
-        _("Order Status"), choices=ORDER_STATUS, max_length=50)
+    status = models.CharField(_("Order Status"), choices=ORDER_STATUS, max_length=50, default="COMPLETED")
     quality_rating = models.FloatField(_("Quality Rating of Order"), default=None, validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=5),
     ])
-    issue_date = models.DateTimeField(
-        _("Order Issue Date to the Vendor"), default=None)
-    acknowledgement_date = models.DateTimeField(
-        _("Order Acknowledgment Date"), default=None)
+    issue_date = models.DateTimeField(_("Order Issue Date to the Vendor"), default=timezone.now)
+    acknowledgement_date = models.DateTimeField(_("Order Acknowledgment Date"), default=timezone.now)
 
     class Meta:
         verbose_name = _("Purchase Order")
@@ -89,7 +85,7 @@ class Performance(models.Model):
         MaxValueValidator(limit_value=100)
     ], default=None)
     avg_response_time = models.FloatField(
-        _("Average Response time in Minutes"), default=None)
+        _("Average Response time in Hours"), default=None)
     quality_rating_avg = models.FloatField(_("Average Quality Rating"), validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=5)
@@ -104,7 +100,7 @@ class Performance(models.Model):
         verbose_name_plural = _("Performance Detail")
 
     def __str__(self):
-        return f"Performace Report of {self.vendor} on {self.date}"
+        return f"Performace Report of {self.vendor} | Last Updated: {self.date}"
 
     def get_absolute_url(self):
         return reverse("Performance_detail", kwargs={"vendor_id": self.vendor})

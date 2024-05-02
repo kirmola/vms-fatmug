@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.dispatch import Signal, receiver
 from django.db.models import Avg, Sum, F
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import Vendor, PurchaseOrder, Performance
 
@@ -33,13 +34,13 @@ def update_metrics(sender, instance, created, **kwargs):
         # Calculate Average Response Time
         avg_response_time_timedelta = PurchaseOrder.objects.filter(vendor=vendor, status='COMPLETED').aggregate(
             avg_response_time=Avg(F('acknowledgement_date') - F('issue_date')))['avg_response_time']
-        avg_response_time = (avg_response_time_timedelta.total_seconds()) / 60 if avg_response_time_timedelta else 0
+        avg_response_time_in_hours = (avg_response_time_timedelta.total_seconds()) / 3600 if avg_response_time_timedelta else 0
         
-        vendor.average_response_time = avg_response_time
+        vendor.average_response_time = avg_response_time_in_hours
 
         vendor.save()
 
-        if created:
+        if created or instance.acknowledgement_date:
             # Calculate metrics for this vendor and date
             date = instance.delivery_date.date()
 
@@ -67,8 +68,10 @@ def update_metrics(sender, instance, created, **kwargs):
                 date=date,
                 defaults={
                     'on_time_delivery_rate': on_time_delivery_rate,
-                    'avg_response_time': avg_response_time,
+                    'avg_response_time': avg_response_time_in_hours,
                     'quality_rating_avg': quality_rating_avg,
                     'fulfillment_rate': fulfillment_rate
                 }
             )
+
+ack_signal = Signal()

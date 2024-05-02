@@ -18,3 +18,10 @@ class PerformanceSerializer(ModelSerializer):
     class Meta:
         model = Performance
         fields = "__all__"
+
+
+class POAckSerializer(ModelSerializer):
+    class Meta:
+        model = PurchaseOrder
+        fields = ["acknowledgement_date"]
+        

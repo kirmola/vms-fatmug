@@ -29,5 +29,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("api/vendors/<str:vendor_id>/performance/", views.PerformanceViewSet.as_view({"get":"list"}), name="vendor_performance"),
+    path("api/purchase_orders/<str:pk>/acknowledge/", views.POAckViewSet.as_view({"patch":"partial_update"})),
     path("auth/", include("rest_framework.urls"))
 ]

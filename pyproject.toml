@@ -12,6 +12,8 @@ djangorestframework = "^3.15.1"
 django-filter = "^24.2"
 
 
+[tool.poetry.group.dev.dependencies]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
