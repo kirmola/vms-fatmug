@@ -13,6 +13,7 @@ django-filter = "^24.2"
 
 
 [tool.poetry.group.dev.dependencies]
+faker = "^25.0.1"
 
 [build-system]
 requires = ["poetry-core"]

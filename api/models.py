@@ -6,7 +6,7 @@ from django.core.validators import (
     MinValueValidator,
 )
 from django.utils import timezone
-
+from datetime import datetime
 
 class Vendor(models.Model):
 
@@ -60,8 +60,8 @@ class PurchaseOrder(models.Model):
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=5),
     ])
-    issue_date = models.DateTimeField(_("Order Issue Date to the Vendor"), default=timezone.now)
-    acknowledgement_date = models.DateTimeField(_("Order Acknowledgment Date"), default=timezone.now)
+    issue_date = models.DateTimeField(_("Order Issue Date to the Vendor"), default=datetime.now())
+    acknowledgement_date = models.DateTimeField(_("Order Acknowledgment Date"), default=datetime.now(), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Purchase Order")
