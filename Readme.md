@@ -22,3 +22,6 @@ After running these commands, your Django project should be running locally at [
 ### Admin Credentials
 username: root
 password: root
+
+### Run model tests
+python manage.py test 
