@@ -17,7 +17,7 @@ from api.signals import ack_signal
 class VendorViewSet(ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
-    http_method_names = ["get", "post", "put", "delete"]
+    http_method_names = ["get", "post", "put", "delete", "patch"]
 
 class POViewSet(ModelViewSet):
     queryset = PurchaseOrder.objects.all()
