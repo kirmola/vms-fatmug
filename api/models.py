@@ -5,8 +5,8 @@ from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
 )
-from django.utils import timezone
 from datetime import datetime
+
 
 class Vendor(models.Model):
 
@@ -49,19 +49,24 @@ class PurchaseOrder(models.Model):
         ("CANCELLED", "Cancelled"),
     )
 
-    po_number = models.CharField(_("Unique PO Number"), max_length=50, primary_key=True)
-    vendor = models.ForeignKey("api.Vendor", verbose_name=_("Vendor"), on_delete=models.CASCADE)
+    po_number = models.CharField(
+        _("Unique PO Number"), max_length=50, primary_key=True)
+    vendor = models.ForeignKey("api.Vendor", verbose_name=_(
+        "Vendor"), on_delete=models.CASCADE)
     order_date = models.DateTimeField(_("Order Date"), auto_now_add=True)
     delivery_date = models.DateTimeField(_("Delivery Date"), auto_now=True)
     items = models.JSONField(_("Ordered Items Details"), default=dict)
     quantity = models.IntegerField(_("Quantity of Items"))
-    status = models.CharField(_("Order Status"), choices=ORDER_STATUS, max_length=50, default="COMPLETED")
+    status = models.CharField(
+        _("Order Status"), choices=ORDER_STATUS, max_length=50, default="COMPLETED")
     quality_rating = models.FloatField(_("Quality Rating of Order"), default=None, validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=5),
     ])
-    issue_date = models.DateTimeField(_("Order Issue Date to the Vendor"), default=datetime.now())
-    acknowledgement_date = models.DateTimeField(_("Order Acknowledgment Date"), default=datetime.now(), blank=True, null=True)
+    issue_date = models.DateTimeField(
+        _("Order Issue Date to the Vendor"), default=datetime.now())
+    acknowledgement_date = models.DateTimeField(
+        _("Order Acknowledgment Date"), default=datetime.now(), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Purchase Order")

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpRequest
 
-from .models import (
+from api.models import (
     PurchaseOrder,
     Vendor,
     Performance

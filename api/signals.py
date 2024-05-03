@@ -1,9 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import Signal, receiver
 from django.db.models import Avg, Sum, F
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from .models import Vendor, PurchaseOrder, Performance
+from api.models import PurchaseOrder, Performance
+
 
 @receiver(post_save, sender=PurchaseOrder)
 def update_metrics(sender, instance, created, **kwargs):
@@ -15,7 +15,8 @@ def update_metrics(sender, instance, created, **kwargs):
             vendor=vendor, status='COMPLETED').count()
         on_time_deliveries_count = PurchaseOrder.objects.filter(
             vendor=vendor, status='COMPLETED', delivery_date__lte=timezone.now()).count()
-        on_time_delivery_rate = (on_time_deliveries_count / completed_pos_count) * 100 if completed_pos_count != 0 else 0
+        on_time_delivery_rate = (
+            on_time_deliveries_count / completed_pos_count) * 100 if completed_pos_count != 0 else 0
         vendor.on_time_delivery_rate = on_time_delivery_rate
 
         # Calculate Quality Rating Average
@@ -24,7 +25,8 @@ def update_metrics(sender, instance, created, **kwargs):
         vendor.quality_rating_avg = quality_rating_avg
 
         # Calculate Fulfillment Rate
-        vendors_total_purchase_order = PurchaseOrder.objects.filter(vendor=vendor)
+        vendors_total_purchase_order = PurchaseOrder.objects.filter(
+            vendor=vendor)
         vendors_fulfilled_pos = vendors_total_purchase_order.filter(
             status='COMPLETED')
         fulfillment_rate = (vendors_fulfilled_pos.count() /
@@ -34,8 +36,9 @@ def update_metrics(sender, instance, created, **kwargs):
         # Calculate Average Response Time
         avg_response_time_timedelta = PurchaseOrder.objects.filter(vendor=vendor, status='COMPLETED').aggregate(
             avg_response_time=Avg(F('acknowledgement_date') - F('issue_date')))['avg_response_time']
-        avg_response_time_in_hours = (avg_response_time_timedelta.total_seconds()) / 3600 if avg_response_time_timedelta else 0
-        
+        avg_response_time_in_hours = (avg_response_time_timedelta.total_seconds(
+        )) / 3600 if avg_response_time_timedelta else 0
+
         vendor.average_response_time = avg_response_time_in_hours
 
         vendor.save()
@@ -48,7 +51,8 @@ def update_metrics(sender, instance, created, **kwargs):
                 vendor=vendor, status='COMPLETED').count()
             on_time_delivery_count = PurchaseOrder.objects.filter(
                 vendor=vendor, status='COMPLETED', delivery_date__lte=instance.delivery_date).count()
-            on_time_delivery_rate = (on_time_delivery_count / total_completed_orders) * 100 if total_completed_orders != 0 else 0
+            on_time_delivery_rate = (
+                on_time_delivery_count / total_completed_orders) * 100 if total_completed_orders != 0 else 0
 
             total_quality_ratings = PurchaseOrder.objects.filter(
                 vendor=vendor, status='COMPLETED', quality_rating__isnull=False).count()
@@ -73,5 +77,6 @@ def update_metrics(sender, instance, created, **kwargs):
                     'fulfillment_rate': fulfillment_rate
                 }
             )
+
 
 ack_signal = Signal()
