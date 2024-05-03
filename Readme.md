@@ -24,4 +24,6 @@ username: root
 password: root
 
 ### Run model tests
+```sh
 python manage.py test 
+```
