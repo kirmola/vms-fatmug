@@ -16,19 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from api import views
 
 
-router = routers.DefaultRouter()
-router.register(r"vendors", views.VendorViewSet)
-router.register(r"purchase_orders", views.POViewSet)
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),
-    path("api/vendors/<str:vendor_id>/performance/", views.PerformanceViewSet.as_view({"get":"list"}), name="vendor_performance"),
-    path("api/purchase_orders/<str:pk>/acknowledge/", views.POAckViewSet.as_view({"patch":"partial_update"})),
+    path("api/", include("api.urls")),
     path("auth/", include("rest_framework.urls"))
 ]
