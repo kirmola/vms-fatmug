@@ -4,8 +4,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from ..models import PurchaseOrder, Vendor
 from faker import Faker
-from random import randint, uniform
+from random import randint, uniform, choice
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class PurchaseOrderTests(TestCase):
@@ -23,8 +24,6 @@ class PurchaseOrderTests(TestCase):
         detail_route = reverse("vendor-detail", kwargs={
             "pk": vendor_code
         })
-
-        #   Create vendor
 
         data = {
             "vendor_code": vendor_code,
@@ -48,8 +47,9 @@ class PurchaseOrderTests(TestCase):
         response = self.client.get(list_route)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        vendor_obj = Vendor.objects.get(vendor_code=vendor_code).vendor_code
-        self.assertEqual(vendor_obj, vendor_code)
+        #   Retrieve vendor's assertion
+        vendor_obj = Vendor.objects.filter(vendor_code=vendor_code).exists()
+        self.assertEqual(vendor_obj, True)
 
         #   Update/patch vendor and assert update
         update_data = {
@@ -70,41 +70,80 @@ class PurchaseOrderTests(TestCase):
         vendor_exists = Vendor.objects.filter(vendor_code=vendor_code).exists()
         self.assertEqual(vendor_exists, False)
 
-    # def test_vendor_detail_route(self):
-    #     url = reverse("vendor-detail")
-    #     primary_key =
-    #     self.client.force_login(user=self.user)
+    def test_purchase_order_routes(self):
 
-        #   Retrieve Vendor Detail
+        po_number = self.fake.uuid4()
+        vendor_id = self.fake.uuid4()
+        list_route = reverse('purchaseorder-list')
+        detail_route = reverse("purchaseorder-detail", kwargs={
+            "pk": po_number
+        })
 
-        #   Update Vendor Detail
+        vendor_obj = Vendor.objects.create(
+            name=self.fake.name(),
+            contact_details=self.fake.phone_number(),
+            address=self.fake.address(),
+            vendor_code=self.fake.uuid4(),
+            on_time_delivery_rate=randint(10, 100),
+            quality_rating_avg=randint(1, 5),
+            average_response_time=uniform(0.0001, 1000),
+            fulfillment_rate=randint(10, 100),
+        )
 
-        #   Delete Vendor Detail
+        data = {
+            "po_number": po_number,
+            "vendor": vendor_obj.vendor_code,
+            "order_date": self.fake.date_this_year(
+                before_today=True, after_today=False),
+            "delivery_date": self.fake.date_this_year(
+                after_today=True, before_today=False),
+            "items": self.fake.json(num_rows=5),
+            "quantity": randint(1, 20),
+            "status": choice(("COMPLETED", "PENDING", "CANCELLED")),
+            "quality_rating": randint(1, 5),
+            "issue_date": timezone.make_aware(
+                self.fake.date_time_this_year(before_now=True, after_now=False)),
+            "acknowledgement_date": timezone.make_aware(
+                self.fake.date_time_this_year(after_now=True, before_now=False)),
 
-        # data = {
-        #     "vendor_code": self.vendor_code
-        # }
-        # response = self.client.delete(url, data=data)
+        }
 
-        # print(response.status_code)
+        #   Login user forcefully for testing
+        self.client.force_login(user=self.user)
 
-    # def test_create_purchase_order(self):
-    #     url = reverse('purchaseorder-list')
-    #     data = {
-    #         'po_number': 'PO123',
-    #         'vendor': 1
-    #         'order_date': '2022-01-01T00:00:00Z',
-    #         'delivery_date': '2022-01-10T00:00:00Z',
-    #         'items': {'item1': 'details1', 'item2': 'details2'},
-    #         'quantity': 10,
-    #         'status': 'COMPLETED',
-    #         'quality_rating': 5,
-    #     }
+        #   Create PO's
+        response = self.client.post(list_route, data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(PurchaseOrder.objects.get().po_number, po_number)
 
-    #     response = self.client.post(url, data, format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(PurchaseOrder.objects.count(), 1)
-    #     self.assertEqual(PurchaseOrder.objects.get().po_number, 'PO123')
+        #   List PO's
+
+        response = self.client.get(list_route)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        #   Retrieve PO's assertion
+        self.assertEqual(PurchaseOrder.objects.filter(
+            po_number=po_number).exists(), True)
+
+        #   Update/patch PO's and assert updates
+
+        update_data = {
+            "quantity": 3000
+        }
+
+        response = self.client.patch(detail_route, data=update_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        #   Verify patched data
+        updated_quantity = PurchaseOrder.objects.get(
+            po_number=po_number).quantity
+        self.assertEqual(updated_quantity, 3000)
+
+        #   Delete PO's and assert deletion
+
+        response = self.client.delete(detail_route)
+        po_exists = PurchaseOrder.objects.filter(po_number=po_number).exists()
+        self.assertEqual(po_exists, False)
 
     # def test_get_purchase_order(self):
     #     purchase_order = PurchaseOrder.objects.create(
@@ -112,7 +151,7 @@ class PurchaseOrderTests(TestCase):
     #         vendor_id=1,  # Assuming vendor ID 1 exists
     #         order_date='2022-02-01T00:00:00Z',
     #         delivery_date='2022-02-10T00:00:00Z',
-    #         items={'item1': 'details1', 'item2': 'details2'},
+    #         items={'item1':"details1', 'item2':"details2'},
     #         quantity=20,
     #         status='PENDING',
     #         quality_rating=3,
