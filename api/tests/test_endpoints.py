@@ -2,11 +2,16 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from ..models import PurchaseOrder, Vendor
+from api.models import PurchaseOrder, Vendor
 from faker import Faker
-from random import randint, uniform, choice
+from random import (
+    randint,
+    uniform,
+    choice
+)
 from django.contrib.auth.models import User
 from django.utils import timezone
+from api.logics import create_vendor_and_po_objets
 
 
 class PurchaseOrderTests(TestCase):
@@ -79,16 +84,7 @@ class PurchaseOrderTests(TestCase):
             "pk": po_number
         })
 
-        vendor_obj = Vendor.objects.create(
-            name=self.fake.name(),
-            contact_details=self.fake.phone_number(),
-            address=self.fake.address(),
-            vendor_code=self.fake.uuid4(),
-            on_time_delivery_rate=randint(10, 100),
-            quality_rating_avg=randint(1, 5),
-            average_response_time=uniform(0.0001, 1000),
-            fulfillment_rate=randint(10, 100),
-        )
+        vendor_obj = create_vendor_and_po_objets()[0]
 
         data = {
             "po_number": po_number,
@@ -114,7 +110,7 @@ class PurchaseOrderTests(TestCase):
         #   Create PO's
         response = self.client.post(list_route, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(PurchaseOrder.objects.get().po_number, po_number)
+        self.assertEqual(PurchaseOrder.objects.filter(po_number=po_number).get().po_number, po_number)
 
         #   List PO's
 
