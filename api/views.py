@@ -38,11 +38,5 @@ class PerformanceViewSet(ModelViewSet):
 
 class POAckViewSet(ModelViewSet):
     serializer_class = POAckSerializer
-    http_method_names = ["patch"]
+    http_method_names = ["post"]
     queryset = PurchaseOrder.objects.all()
-
-    def update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        response = super().update(request, *args, **kwargs)
-        ack_signal.send(sender=self.__class__, instance=self.get_object())
-        return response

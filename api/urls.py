@@ -13,6 +13,6 @@ urlpatterns = [
     path("vendors/<str:vendor_id>/performance/",
          views.PerformanceViewSet.as_view({"get": "list"}), name="vendor-performance"),
     path("purchase_orders/<str:pk>/acknowledge/",
-         views.POAckViewSet.as_view({"patch": "partial_update"}), name="acknowledge"),
+         views.POAckViewSet.as_view({"post": "update"}), name="acknowledge"),
 
 ]
