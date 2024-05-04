@@ -1,4 +1,3 @@
-from typing import Iterable
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -78,7 +77,7 @@ class PurchaseOrder(models.Model):
 
     def get_absolute_url(self):
         return reverse("PurchaseOrder_detail", kwargs={"po_id": self.po_number})
-    
+
     def save(self, *args, **kwargs):
         if self.quality_rating is None:
             self.quality_rating = 0

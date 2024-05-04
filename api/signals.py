@@ -1,8 +1,15 @@
 from django.db.models.signals import post_save
 from django.dispatch import Signal, receiver
-from django.db.models import Avg, Sum, F
+from django.db.models import (
+    Avg,
+    Sum,
+    F
+)
 from django.utils import timezone
-from api.models import PurchaseOrder, Performance
+from api.models import (
+    PurchaseOrder,
+    Performance
+)
 
 
 @receiver(post_save, sender=PurchaseOrder)

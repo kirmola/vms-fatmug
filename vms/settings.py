@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_random_secret_key() if DEBUG == False else "3wp_)(n4+42+7y-hthrcqp^sv*4b)lu3i(4y4jmvhdw+o$zl)6"
+SECRET_KEY = get_random_secret_key(
+) if DEBUG == False else "3wp_)(n4+42+7y-hthrcqp^sv*4b)lu3i(4y4jmvhdw+o$zl)6"
 
 
 ALLOWED_HOSTS = []
@@ -126,10 +127,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
 ######################## Other Installed Apps############################
 
-INSTALLED_APPS+=[
+INSTALLED_APPS += [
     "api",
 ]
 
@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-INSTALLED_APPS+=[
+INSTALLED_APPS += [
     "rest_framework",
     "django_filters",
     "rest_framework.authtoken",

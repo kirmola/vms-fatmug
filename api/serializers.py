@@ -1,5 +1,9 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Vendor, PurchaseOrder, Performance
+from .models import (
+    Vendor,
+    PurchaseOrder,
+    Performance
+)
 
 
 class VendorSerializer(ModelSerializer):
@@ -24,4 +28,3 @@ class POAckSerializer(ModelSerializer):
     class Meta:
         model = PurchaseOrder
         fields = ["acknowledgement_date"]
-        
