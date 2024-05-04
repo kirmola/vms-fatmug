@@ -23,16 +23,34 @@ poetry run python manage.py runserver
 
 After running these commands, your Django project should be running locally at [http://localhost:8000/](http://localhost:8000/).
 
-### Admin Credentials
-username: root
-password: root
 
-### Run model tests
+### Admin Credentials
+
+Create a superuser with following command:
+```sh
+python manage.py createsuperuser
+``` 
+Following the prompts to create a sample username and password of your choice 
+
+
+### Test suite
+
+Tests can be run with the following command:
 ```sh
 python manage.py test 
 ```
 
+
 ## API Documentation
+
+- API Routes will **NOT** be accessible *until* obtained a API Token from admin panel. Login to admin panel from [here](http://localhost:8000/admin/authtoken/) and create a token for logged in user.
+
+- Once token is created, pass that token in the requests to API as per example given below.
+
+```
+curl -H "Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b" http://localhost:8000/api/
+```
+**Be sure to replace the token above with your token**
 
 1. Following are the API endpoints to interact with vendor model:
 
