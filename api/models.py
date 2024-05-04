@@ -1,3 +1,4 @@
+from typing import Iterable
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -60,9 +61,9 @@ class PurchaseOrder(models.Model):
     status = models.CharField(
         _("Order Status"), choices=ORDER_STATUS, max_length=50, default="COMPLETED")
     quality_rating = models.FloatField(_("Quality Rating of Order"), default=None, validators=[
-        MinValueValidator(limit_value=1),
+        MinValueValidator(limit_value=0),
         MaxValueValidator(limit_value=5),
-    ])
+    ], null=True, blank=True)
     issue_date = models.DateTimeField(
         _("Order Issue Date to the Vendor"), default=datetime.now())
     acknowledgement_date = models.DateTimeField(
@@ -77,6 +78,11 @@ class PurchaseOrder(models.Model):
 
     def get_absolute_url(self):
         return reverse("PurchaseOrder_detail", kwargs={"po_id": self.po_number})
+    
+    def save(self, *args, **kwargs):
+        if self.quality_rating is None:
+            self.quality_rating = 0
+        return super().save(*args, **kwargs)
 
 
 class Performance(models.Model):
@@ -84,7 +90,7 @@ class Performance(models.Model):
     vendor = models.ForeignKey("api.Vendor", verbose_name=_(
         "Vendor"), on_delete=models.CASCADE)
     date = models.DateField(_("Date of Performace Record"),
-                            auto_now=True)
+                            auto_now_add=True)
     on_time_delivery_rate = models.FloatField(_("Percentage of On-time delivery"), validators=[
         MinValueValidator(limit_value=1),
         MaxValueValidator(limit_value=100)
@@ -105,7 +111,7 @@ class Performance(models.Model):
         verbose_name_plural = _("Performance Detail")
 
     def __str__(self):
-        return f"Performace Report of {self.vendor} | Last Updated: {self.date}"
+        return f"Performace Report of {self.vendor} on: {self.date}"
 
     def get_absolute_url(self):
         return reverse("Performance_detail", kwargs={"vendor_id": self.vendor})

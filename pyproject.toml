@@ -2,8 +2,9 @@
 name = "vms-fatmug"
 version = "0.1.0"
 description = ""
-authors = ["Aman Rawat <ar.rawataman@gmail.com>"]
+authors = ["Aman Rawat <kirmolaa@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
