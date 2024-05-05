@@ -2,6 +2,8 @@
 
 ## Setting-up the Project
 
+### Python: v3.11 or above is required, please install from [here](https://www.python.org/downloads/) 
+
 ### Cloning the Repository
 ```sh
 git clone https://github.com/kirmola/vms-fatmug.git
@@ -33,22 +35,16 @@ python manage.py createsuperuser
 Following the prompts to create a sample username and password of your choice 
 
 
-### Test suite
-
-Tests can be run with the following command:
-```sh
-python manage.py test 
-```
-
-
 ## API Documentation
 
 - API Routes will **NOT** be accessible *until* obtained a API Token from admin panel. Login to admin panel from [here](http://localhost:8000/admin/authtoken/) and create a token for logged in user.
 
-- Once token is created, pass that token in the requests to API as per example given below.
+- Once token is created, pass that token in the requests to API.
+
+For example, if you are trying to list all vendors:
 
 ```
-curl -H "Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b" http://localhost:8000/api/
+curl -H "Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b" http://localhost:8000/api/vendors/
 ```
 **Be sure to replace the token above with your token**
 
@@ -75,3 +71,11 @@ curl -H "Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b" http://l
 - API Endpoints:
   - `GET` `/api/vendors/{vendor_id}/performance/`: Retrieve a vendor's performance metrics.
   - `POST` `/api/purchase_orders/{po_id}/acknowledge/`: 
+
+
+### Test suite
+
+Tests can be run with the following command:
+```sh
+python manage.py test 
+```

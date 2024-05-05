@@ -12,14 +12,17 @@ from random import (
 from django.contrib.auth.models import User
 from django.utils import timezone
 from api.logics import create_vendor_and_po_objets
-
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 class PurchaseOrderTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create(
+        self.user = User.objects.create_user(
             username="testuser", password="testpassword")
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION = f"Token {self.token.key}")
         self.fake = Faker()
 
     def test_vendor_route(self):
@@ -41,8 +44,6 @@ class PurchaseOrderTests(TestCase):
             "fulfillment_rate": randint(10, 100)
         }
 
-        #   Login user forcefully for testing
-        self.client.force_login(user=self.user)
 
         #   Create vendor and assert creation
         response = self.client.post(list_route, data=data)
@@ -104,8 +105,6 @@ class PurchaseOrderTests(TestCase):
 
         }
 
-        #   Login user forcefully for testing
-        self.client.force_login(user=self.user)
 
         #   Create PO's
         response = self.client.post(list_route, data=data)
