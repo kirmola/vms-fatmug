@@ -79,3 +79,4 @@ Tests can be run with the following command:
 ```sh
 python manage.py test 
 ```
+**This will run all types of test defined in testcases so we do not need to run them separately**
